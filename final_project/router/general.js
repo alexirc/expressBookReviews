@@ -1,8 +1,76 @@
+import axios from 'axios';
 const express = require('express');
 const books = require('./booksdb.js');
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+
+const API_BASE_URL = 'http://localhost:3000'; 
+
+// Create axios instance with base URL
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+
+const bookService = {
+  
+  async getAllBooks() {
+    try {
+      const response = await api.get('/');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching books:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  async getBookByISBN(isbn) {
+    try {
+      const response = await api.get(`/isbn/${isbn}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching book with ISBN ${isbn}:`, error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+
+  async getBooksByAuthor(author) {
+    try {
+      const response = await api.get(`/author/${author}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching books by author ${author}:`, error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+
+  async getBooksByTitle(title) {
+    try {
+      const response = await api.get(`/title/${title}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching books with title ${title}:`, error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+
+  async getBookReviews(isbn) {
+    try {
+      const response = await api.get(`/review/${isbn}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching reviews for book with ISBN ${isbn}:`, error.response?.data || error.message);
+      throw error;
+    }
+  }
+};
 
 
 public_users.post("/register", (req,res) => {
@@ -117,3 +185,5 @@ public_users.delete("/:isbn", (req, res) => {
 });
 
 module.exports.general = public_users;
+
+
